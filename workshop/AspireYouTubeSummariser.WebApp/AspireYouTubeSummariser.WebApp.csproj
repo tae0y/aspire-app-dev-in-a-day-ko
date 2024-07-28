@@ -8,9 +8,25 @@
     <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="8.1.0" />
   </ItemGroup>
 
+  <!-- 추가 -->
+  <ItemGroup>
+    <Content Remove="$(JSInteropRoot)**" />
+    <None Remove="$(JSInteropRoot)**" />
+    <None Include="$(JSInteropRoot)**" Exclude="$(JSInteropRoot)node_modules/**" />
+  </ItemGroup>
+
+  <!-- 추가 -->
+  <Target Name="PublishRunWebpack" AfterTargets="Build">
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(JSInteropRoot)" Command="npm run build" />
+  </Target>
+
   <PropertyGroup>
     <AssemblyName>AspireYouTubeSummariser.WebApp</AssemblyName>
     <RootNamespace>AspireYouTubeSummariser.WebApp</RootNamespace>
+    <!-- 추가 -->
+    <JSInteropRoot>JSInterop/</JSInteropRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(JSInteropRoot)node_modules/**</DefaultItemExcludes>
   </PropertyGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 @using AspireYouTubeSummariser.WebApp.Clients
 @inject IApiAppClient ApiApp
+@inject IJSRuntime JSR
 
 <div class="container">
     <div class="row">
@@ -40,6 +41,13 @@
         </div>
     </div>
 
+    <!-- 프로그레스 바 -->
+    <div class="row">
+        <div class="mb-3">
+            <div id="progressBar" hidden="@summaryCompleted"></div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="mb-3">
             <label for="summary" class="form-label"><strong>Summary</strong></label>
@@ -54,8 +62,14 @@
     private string summaryLanguageCode = "en";
     private string summaryResult = string.Empty;
 
+    private bool summaryCompleted;
+
     private async Task SummariseAsync()
     {
+        // 추가
+        summaryCompleted = false;
+        await JSR.InvokeVoidAsync("YouTube.RenderProgressBar");
+
         try
         {
             var result = await ApiApp.SummariseAsync(youTubeLinkUrl, videoLanguageCode, summaryLanguageCode);
@@ -65,6 +79,12 @@
         {
             summaryResult = ex.Message;
         }
+        finally {
+            summaryCompleted = true;
+        }
+
+        // 추가
+        summaryCompleted = true;
     }
 
     private async Task ClearAsync()
